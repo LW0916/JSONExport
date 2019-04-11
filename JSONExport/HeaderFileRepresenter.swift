@@ -46,7 +46,7 @@ class HeaderFileRepresenter : FileRepresenter{
         
         //start the model defination
         var definition = ""
-        if lang.headerFileData.modelDefinitionWithParent != nil && parentClassName.characters.count > 0{
+        if lang.headerFileData.modelDefinitionWithParent != nil && parentClassName.count > 0{
             definition = lang.headerFileData.modelDefinitionWithParent.replacingOccurrences(of: modelName, with: className)
             definition = definition.replacingOccurrences(of: modelWithParentClassName, with: parentClassName)
         }else if includeUtilities && lang.defaultParentWithUtilityMethods != nil{
@@ -82,7 +82,7 @@ class HeaderFileRepresenter : FileRepresenter{
     
     func appendImportParentHeader()
     {
-        if lang.headerFileData.importParentHeaderFile != nil && parentClassName.characters.count > 0{
+        if lang.headerFileData.importParentHeaderFile != nil && parentClassName.count > 0{
             fileContent += lang.headerFileData.importParentHeaderFile.replacingOccurrences(of: modelWithParentClassName, with: parentClassName)
         }
     }
@@ -109,7 +109,7 @@ class HeaderFileRepresenter : FileRepresenter{
             }
             
             fileContent += ". All rights reserved.\n//\n\n"
-            fileContent += "//\tModel file Generated using JSONExport: https://github.com/Ahmed-Ali/JSONExport\n\n"
+            //fileContent += "//\tModel file Generated using JSONExport: https://github.com/Ahmed-Ali/JSONExport\n\n"
         }
         
     }

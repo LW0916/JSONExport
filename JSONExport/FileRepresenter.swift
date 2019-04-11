@@ -101,7 +101,7 @@ class FileRepresenter{
         appendCustomImports()
         //start the model defination
         var definition = ""
-        if lang.modelDefinitionWithParent != nil && parentClassName.characters.count > 0{
+        if lang.modelDefinitionWithParent != nil && parentClassName.count > 0{
             definition = lang.modelDefinitionWithParent.replacingOccurrences(of: modelName, with: className)
             definition = definition.replacingOccurrences(of: modelWithParentClassName, with: parentClassName)
         }else if includeUtilities && lang.defaultParentWithUtilityMethods != nil{
@@ -129,7 +129,7 @@ class FileRepresenter{
     */
     func appendFirstLineStatement()
     {
-        if lang.supportsFirstLineStatement != nil && lang.supportsFirstLineStatement! && firstLine.characters.count > 0{
+        if lang.supportsFirstLineStatement != nil && lang.supportsFirstLineStatement! && firstLine.count > 0{
             fileContent += "\(firstLine)\n\n"
         }
     }
@@ -372,7 +372,18 @@ class FileRepresenter{
                     if let index = lang.basicTypesWithSpecialFetchingNeeds.index(of: property.type), let replacement = lang.basicTypesWithSpecialFetchingNeedsReplacements?[index]{
                        propertyHandlingStr = propertyHandlingStr.replacingOccurrences(of: varTypeReplacement, with: replacement)
                         
-                        
+                        var castString = String()
+                        if let cast = lang.basicTypesWithSpecialFetchingNeedsTypeCast?[index]{
+                            // if needs cast
+                            if !cast.isEmpty {
+                                castString = "(\(cast)) "
+                            }
+                            else {
+                                castString = cast
+                            }
+                        }
+                        propertyHandlingStr = propertyHandlingStr.replacingOccurrences(of: varTypeCast, with: castString)
+
                         let lowerCaseType = property.type.lowercased()
                         propertyHandlingStr = propertyHandlingStr.replacingOccurrences(of: lowerCaseVarType, with: lowerCaseType)
                         
@@ -419,7 +430,7 @@ class FileRepresenter{
             type = type.replacingOccurrences(of: arrayWord, with: "")
         }
         
-        if type.characters.count == 0{
+        if type.count == 0{
             type = typeNameForArrayElements(property.sampleValue as! NSArray, lang: lang)
         }
         return type
@@ -468,6 +479,16 @@ class FileRepresenter{
                     propertyStr = constructor.fetchArrayOfBasicTypePropertyFromMap
                     let replacement = lang.basicTypesWithSpecialFetchingNeedsReplacements[index]
                     propertyStr = propertyStr.replacingOccurrences(of: varTypeReplacement, with: replacement)
+                    
+                    // if needs cast
+                    let cast = lang.basicTypesWithSpecialFetchingNeedsTypeCast[index]
+                    if !cast.isEmpty {
+                        propertyStr = propertyStr.replacingOccurrences(of: varTypeCast, with: "(\(cast)) ")
+                    }
+                    else {
+                        propertyStr = propertyStr.replacingOccurrences(of: varTypeCast, with: cast)
+                    }
+
                 }else{
                     propertyStr = constructor.fetchBasicTypePropertyFromMap
                 }
@@ -500,6 +521,18 @@ class FileRepresenter{
                     propertyStr = propertyStr.replacingOccurrences(of: varTypeReplacement, with: replacement)
                 }
                 
+                var castString = String()
+                if let cast = lang.basicTypesWithSpecialFetchingNeedsTypeCast?[index!]{
+                    // if needs cast
+                    if !cast.isEmpty {
+                        castString = "(\(cast)) "
+                    }
+                    else {
+                        castString = cast
+                    }
+                }
+                propertyStr = propertyStr.replacingOccurrences(of: varTypeCast, with: castString)
+
                 let lowerCaseType = property.type.lowercased()
                 propertyStr = propertyStr.replacingOccurrences(of: lowerCaseVarType, with: lowerCaseType)
                 
